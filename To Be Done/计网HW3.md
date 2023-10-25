@@ -59,11 +59,27 @@
 
 ## 44
 
-
+- 6
+- $\frac{(6+7+8+9+10+11)}{6}=8.5\quad MSS/RTT$
 
 ## 45
 
+- $发包数=\sum_{i=0}^{\frac{W}{2}}(\frac{W}{2}+n)$
 
+  $丢包率=\frac{丢包数}{发包数}=\frac{1}{\frac{3W^2}{8}+\frac{3W}{4}}$
+
+- 由上一问可以得$W\approx \sqrt{\frac{8}{3L}}$,所以平均速率为$\frac{3}{4}\frac{W}{RTT}\approx \quad \frac{1.22MSS}{RTT\sqrt{L}}$
 
 ## 46
 
+- 最大窗口长度为$\frac{10M\times0.15}{8\times1500=125}$
+
+- 平均窗口长度为$125\times0.75=94$
+
+  平均吞吐量为$\frac{94\times1500\times8}{0.15}=7.52Mbps$
+
+- 丢包后窗口长度为$\frac{125}{2}+3=65$
+
+  时间为$(125-66)\times0.15=9s$
+
+  
