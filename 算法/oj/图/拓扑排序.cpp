@@ -1,70 +1,64 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <set>
+using namespace std;
 
 const int MOD = 1e9 + 7;
-int flag[5001];
-int flag1[5001];
-int main()
-{
-    int N, M;
-    scanf("%d%d", &N, &M);
 
-    int **dp;
-    dp = (int **)malloc(sizeof(int *) * (N + 1));
-    for (int i = 0; i <= N; ++i)
-    {
-        dp[i] = (int *)malloc(sizeof(int) * (N + 1));
-        for (int j = 0; j <= N; ++j)
-        {
-            dp[i][j] = 0;
+int main() {
+    int N, M;
+    cin >> N >> M;
+
+    vector<vector<int>> graph(N + 1); 
+    vector<int> indegree(N + 1, 0); 
+    vector<int> dp(N + 1, 0); 
+
+    set<int> startSet, endSet;
+
+    for (int i = 0; i < M; i++) {
+        int x, y;
+        cin >> x >> y;
+        graph[x].push_back(y);
+        indegree[y]++;
+    }
+
+    
+    for (int i = 1; i <= N; i++) {
+        if (indegree[i] == 0) {
+            startSet.insert(i);
+        }
+        if (graph[i].empty()) {
+            endSet.insert(i);
         }
     }
-    for (int i = 0; i < M; ++i)
-    {
-        int c, g;
-        scanf("%d%d", &c, &g);
-        dp[c][g] = 1;
-    }
 
-    for (int k = 1; k <= N; ++k)
-    {
-        for (int i = 1; i <= N; ++i)
-        {
-            for (int j = 1; j <= N; ++j)
-            {
-                if (dp[i][k] && dp[k][j])
-                {
-                    dp[i][j] = (dp[i][j] + dp[i][k] * dp[k][j]) % MOD;
+    for (int start : startSet) {
+        dp[start] = 1; 
+
+        queue<int> q;
+        q.push(start);
+
+        while (!q.empty()) {
+            int cur = q.front();
+            q.pop();
+
+            for (int next : graph[cur]) {
+                dp[next] = (dp[next] + dp[cur]) % MOD; 
+                indegree[next]--;
+                if (indegree[next] == 0) {
+                    q.push(next);
                 }
             }
         }
     }
 
-    int result = 0;
-    
-    for (int k = 1; k <= N; k++)
-    {
-        for (int i = 1; i <= N;i++){
-            if (dp[k][i] >= 1)
-                flag[k] = 1; 
-            if(dp[i][k] >= 1)
-                flag1[k] = 1;
-        }
-            
-    }
-    
-    for (int i = 1; i <= N; ++i)
-    {
-        for (int j = i + 1; j <= N; ++j)
-        {
-            
-            if (flag[j] == 0 && flag1[i] == 0)
-                result = (result + dp[i][j]) % MOD;
-
-        }
+    int total = 0;
+    for (int end : endSet) {
+        total = (total + dp[end]) % MOD; 
     }
 
-    printf("%d\n", result);
+    cout << total << endl;
 
     return 0;
 }
