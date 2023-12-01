@@ -1,75 +1,59 @@
+#define _CRT_SECURE_NO_WARNINGS 
 #include <stdio.h> 
 #include <stdlib.h>
-int parent[100005];
-int n,m;
-int i,j;
- 
-typedef struct edge{
-	int u,v,w; 
+#define MAX_N 100005
+int parent[MAX_N];
+
+
+typedef struct edge {
+	int u, v, w;
 }Edge;
- 
-Edge edges[100005];
-//查找i的根 
-int find(int i){
-	int tmp=i;
-	while(parent[tmp]>=0)
-		tmp=parent[tmp];
-	while(tmp != i){
-		int t = parent[i];
-		parent[i] = tmp;
-		i = t;
-	}
-	return tmp;
+
+Edge edges[MAX_N];
+int cmp(const void* a, const void* b) {
+	return ((Edge*)a)->w - ((Edge*)b)->w;
 }
-//合并两个元素a,b
-void merge(int a,int b){
+
+int find(int i) {
+	while (parent[i] >= 0)
+		i = parent[i];
+	return i;
+}
+void Merge(int a, int b) {
 	int ra = find(a);
 	int rb = find(b);
-	int tmp = parent[ra] + parent[rb]; //两个集合节点数的和
-	if(parent[ra] > parent[rb]){
-		parent[ra] = rb;
-		parent[rb] = tmp;
-	}else{
-		parent[rb] = ra;
-		parent[ra] = tmp;
-	}
+	int sum = parent[ra] + parent[rb];
+	parent[ra] > parent[rb] ? (parent[ra] = rb, parent[rb] = sum) : (parent[rb] = ra, parent[ra] = sum);
 }
- 
-int kruskal(int n){
-	int Sum = 0;
-	int num = 0;
-	int u,v;
-	for(i=1; i<=n; i++) 
-		parent[i] = -1;
-	for(int i=0; i<m; i++)
+
+int Kruskal(int n,int m) {
+	int Sum = 0,num = 0;
+	for (int i = 0; i < n; i++)
+		parent[i+1] = -1;
+	for (int i = 0; i < m; i++)
 	{
-		u = edges[i].u;
-		v = edges[i].v;
-		if(find(u) != find(v)){ 
+		if (!(find(edges[i].u) == find(edges[i].v))) {
 			Sum += edges[i].w;
-			num ++;
-			merge(u, v); 
+			num++;
+			Merge(edges[i].u, edges[i].v);
 		}
 	}
-	if(num==n-1)
+	if (num == n - 1)
 		printf("%d\n", Sum);
 	else
 		printf("-1\n");
 	return num;
 }
- 
-int cmp(const void * a, const void * b){
-	Edge * e1 = (Edge *)a;
-	Edge * e2 = (Edge *)b;
-	return e1->w - e2->w;
-}
- 
+
+
+
 int main() {
+	int n, m;
 	scanf("%d %d", &n, &m);
-	for(i=0; i<m; i++){
-		scanf("%d %d %d", &edges[i].u,  &edges[i].v,  &edges[i].w);
+	for (int i = 0; i < m; i++) {
+		scanf("%d %d %d", &edges[i].u, &edges[i].v, &edges[i].w);
 	}
 	qsort(edges, m, sizeof(Edge), cmp);
-    kruskal(n);
+	Kruskal(n,m);
 	return 0;
 }
